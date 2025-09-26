@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube to ChatGPT Transcript Summarizer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        input[type="url"] {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="url"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .info {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .info p {
+            color: #666;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>YouTube Transcript Summarizer</h1>
+        
+        <div class="info">
+            <p>Enter a YouTube URL below and it will redirect to ChatGPT with a request to summarize the video transcript.</p>
+        </div>
+
+        <form id="urlForm">
+            <div class="form-group">
+                <label for="youtubeUrl">YouTube URL:</label>
+                <input 
+                    type="url" 
+                    id="youtubeUrl" 
+                    name="youtubeUrl" 
+                    placeholder="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                    required
+                >
+                <div class="error-message" id="errorMessage">
+                    Please enter a valid YouTube URL
+                </div>
+            </div>
+            
+            <button type="submit" class="submit-btn">
+                Summarize with ChatGPT
+            </button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('urlForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const urlInput = document.getElementById('youtubeUrl');
+            const errorMessage = document.getElementById('errorMessage');
+            const youtubeUrl = urlInput.value.trim();
+            
+            // Hide error message
+            errorMessage.style.display = 'none';
+            
+            // Extract video ID from YouTube URL
+            const videoId = extractVideoId(youtubeUrl);
+            
+            if (videoId) {
+                // Construct the ChatGPT URL with YouTube transcript link
+                const baseUrl = 'https://chatgpt.com/?q=Summarize%20this%20transcript%20https%3A%2F%2Fyoutubetotranscript.com%2Ftranscript%3Fv%3D';
+                const dynamicUrl = baseUrl + videoId;
+                
+                // Redirect to the dynamic URL
+                window.location.href = dynamicUrl;
+            } else {
+                // Show error message
+                errorMessage.style.display = 'block';
+                urlInput.focus();
+            }
+        });
+
+        function extractVideoId(url) {
+            // Regular expressions to match different YouTube URL formats
+            const patterns = [
+                /(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([^&\n?#]+)/,
+                /(?:https?:\/\/)?(?:www\.)?youtube\.com\/embed\/([^&\n?#]+)/,
+                /(?:https?:\/\/)?(?:www\.)?youtube\.com\/v\/([^&\n?#]+)/,
+                /(?:https?:\/\/)?youtu\.be\/([^&\n?#]+)/,
+                /(?:https?:\/\/)?(?:m\.)?youtube\.com\/watch\?v=([^&\n?#]+)/
+            ];
+
+            for (let pattern of patterns) {
+                const match = url.match(pattern);
+                if (match && match[1]) {
+                    return match[1];
+                }
+            }
+            
+            return null;
+        }
+
+        // Add some visual feedback
+        document.getElementById('youtubeUrl').addEventListener('input', function() {
+            const errorMessage = document.getElementById('errorMessage');
+            errorMessage.style.display = 'none';
+        });
+    </script>
+</body>
+</html>
