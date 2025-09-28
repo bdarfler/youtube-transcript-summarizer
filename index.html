@@ -181,10 +181,16 @@
             box-shadow: 0 6px 20px rgba(30, 74, 95, 0.15);
         }
 
+        .video-item:hover .video-title {
+            color: #1e4a5f;
+        }
+
+        .video-item:hover .video-content {
+            background: rgba(30, 74, 95, 0.02);
+        }
+
         .video-item.selected {
             border-color: #1e4a5f;
-            background: linear-gradient(135deg, #1e4a5f 0%, #2d5b4a 100%);
-            color: white;
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(30, 74, 95, 0.25);
         }
@@ -204,6 +210,7 @@
 
         .video-content {
             padding: 18px 20px;
+            transition: background-color 0.2s ease;
         }
 
         .video-title {
@@ -212,19 +219,12 @@
             margin-bottom: 12px;
             line-height: 1.4;
             color: #1e4a5f;
-        }
-
-        .video-item.selected .video-title {
-            color: white;
+            transition: color 0.2s ease;
         }
 
         .video-date {
             font-size: 14px;
             color: #6b8591;
-        }
-
-        .video-item.selected .video-date {
-            color: #b8d4df;
         }
 
         .loading {
@@ -278,15 +278,6 @@
             box-shadow: none;
         }
 
-        .selected-video-action {
-            text-align: center;
-            margin-top: 20px;
-            display: none;
-        }
-
-        .selected-video-action.show {
-            display: block;
-        }
     </style>
 </head>
 <body>
@@ -328,7 +319,7 @@
         <!-- Browse Videos Tab -->
         <div id="browse-tab" class="tab-content active">
             <div class="info">
-                <p>Recent videos will load automatically (4 videos per page). Select one to summarize with ChatGPT.</p>
+                <p>Recent videos will load automatically (4 videos per page). Click any video to immediately summarize it with ChatGPT.</p>
             </div>
 
             <div id="loading" class="loading" style="display: none;">
@@ -347,11 +338,6 @@
                 </button>
             </div>
 
-            <div class="selected-video-action" id="selectedAction">
-                <button class="submit-btn" onclick="summarizeSelectedVideo()">
-                    Summarize Selected Video with ChatGPT
-                </button>
-            </div>
         </div>
     </div>
 
@@ -360,7 +346,6 @@
         let currentPage = 0;
         let videosPerPage = 4;
         let allVideos = [];
-        let selectedVideoId = null;
         let videosLoaded = false;
 
         function switchTab(tabName) {
@@ -640,26 +625,11 @@
         }
 
         function selectVideo(videoId, element) {
-            // Remove selection from all videos
-            document.querySelectorAll('.video-item').forEach(item => {
-                item.classList.remove('selected');
-            });
-            
-            // Select the clicked video
+            // Visual feedback - briefly highlight the selected video
             element.classList.add('selected');
-            selectedVideoId = videoId;
             
-            // Show the action button
-            const actionButton = document.getElementById('selectedAction');
-            actionButton.style.display = 'block';
-            actionButton.classList.add('show');
-            actionButton.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
-
-        function summarizeSelectedVideo() {
-            if (selectedVideoId) {
-                redirectToChatGPT(selectedVideoId);
-            }
+            // Immediately redirect to ChatGPT
+            redirectToChatGPT(videoId);
         }
 
         function loadNextPage() {
@@ -667,10 +637,6 @@
                 currentPage++;
                 displayCurrentPage();
                 updatePagination();
-                selectedVideoId = null;
-                const actionButton = document.getElementById('selectedAction');
-                actionButton.style.display = 'none';
-                actionButton.classList.remove('show');
             }
         }
 
@@ -679,10 +645,6 @@
                 currentPage--;
                 displayCurrentPage();
                 updatePagination();
-                selectedVideoId = null;
-                const actionButton = document.getElementById('selectedAction');
-                actionButton.style.display = 'none';
-                actionButton.classList.remove('show');
             }
         }
 
