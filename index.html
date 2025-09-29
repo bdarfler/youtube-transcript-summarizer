@@ -420,7 +420,7 @@
             window.location.href = dynamicUrl;
         }
 
-        // RSS Feed functionality
+        // RSS Feed functionality with retry logic
         async function loadVideos() {
             const loading = document.getElementById('loading');
             const videoGrid = document.getElementById('videoGrid');
@@ -433,8 +433,13 @@
             const channelId = 'UCpoU6jqTOqHo_bKkPg-vcTA';
             const rssUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`;
             
-            // Try multiple approaches in order of reliability
+            // Try multiple approaches in order of reliability with retry logic
             const methods = [
+                {
+                    name: 'AllOrigins Proxy',
+                    url: `https://api.allorigins.win/raw?url=${encodeURIComponent(rssUrl)}`,
+                    parser: parseXmlResponse
+                },
                 {
                     name: 'RSS2JSON API',
                     url: `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}&count=50`,
@@ -444,50 +449,74 @@
                     name: 'CORS Anywhere',
                     url: `https://cors-anywhere.herokuapp.com/${rssUrl}`,
                     parser: parseXmlResponse
-                },
-                {
-                    name: 'AllOrigins Proxy',
-                    url: `https://api.allorigins.win/raw?url=${encodeURIComponent(rssUrl)}`,
-                    parser: parseXmlResponse
                 }
             ];
             
+            // Retry logic with exponential backoff
+            async function attemptLoad(method, maxRetries = 3) {
+                for (let attempt = 1; attempt <= maxRetries; attempt++) {
+                    try {
+                        if (attempt > 1) {
+                            loading.innerHTML = `Loading videos... (attempt ${attempt}/${maxRetries})`;
+                        }
+                        
+                        console.log(`Trying ${method.name} (attempt ${attempt}/${maxRetries})...`);
+                        
+                        const response = await fetch(method.url);
+                        
+                        if (!response.ok) {
+                            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                        }
+                        
+                        const data = await response.text();
+                        const videos = method.parser(data);
+                        
+                        if (videos && videos.length > 0) {
+                            console.log(`Success with ${method.name} on attempt ${attempt}! Found ${videos.length} videos.`);
+                            return videos;
+                        } else {
+                            throw new Error('No videos found in response');
+                        }
+                        
+                    } catch (error) {
+                        console.log(`${method.name} attempt ${attempt} failed:`, error.message);
+                        
+                        // If not the last attempt, wait with exponential backoff
+                        if (attempt < maxRetries) {
+                            const delayMs = Math.pow(2, attempt - 1) * 1000; // 1s, 2s, 4s
+                            console.log(`Retrying ${method.name} in ${delayMs}ms...`);
+                            loading.innerHTML = `Loading videos... (retrying in ${delayMs/1000}s)`;
+                            await new Promise(resolve => setTimeout(resolve, delayMs));
+                        }
+                    }
+                }
+                return null; // All attempts failed
+            }
+            
+            // Try each method with retry logic
             for (let method of methods) {
-                try {
-                    console.log(`Trying ${method.name}...`);
-                    
-                    const response = await fetch(method.url);
-                    
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                    }
-                    
-                    const data = await response.text();
-                    const videos = method.parser(data);
-                    
-                    if (videos && videos.length > 0) {
-                        console.log(`Success with ${method.name}! Found ${videos.length} videos.`);
-                        allVideos = videos;
-                        displayVideos();
-                        loading.style.display = 'none';
-                        return;
-                    }
-                    
-                } catch (error) {
-                    console.log(`${method.name} failed:`, error.message);
+                loading.innerHTML = `Loading videos...`;
+                const videos = await attemptLoad(method);
+                
+                if (videos && videos.length > 0) {
+                    allVideos = videos;
+                    displayVideos();
+                    loading.style.display = 'none';
+                    return;
                 }
             }
             
-            // If all automatic methods failed, show error message
+            // If all methods and retries failed, show error message
             loading.style.display = 'none';
             videoGrid.innerHTML = `
                 <div class="loading">
                     <p><strong>Unable to load videos from the RSS feed.</strong></p>
+                    <p>All loading methods failed after multiple retry attempts.</p>
                     <p>This might be due to:</p>
                     <ul>
                         <li>Internet connectivity issues</li>
-                        <li>The RSS service being temporarily unavailable</li>
-                        <li>Browser security restrictions</li>
+                        <li>Temporary service unavailability</li>
+                        <li>Rate limiting or server issues</li>
                     </ul>
                     <p><strong>Alternative:</strong> You can use the <strong>"Enter URL"</strong> tab to paste YouTube links directly.</p>
                     <br>
