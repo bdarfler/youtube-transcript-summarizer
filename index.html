@@ -292,7 +292,7 @@
         <!-- URL Input Tab -->
         <div id="url-tab" class="tab-content">
             <div class="info">
-                <p>Enter a YouTube URL to open ChatGPT with a summarization request. You'll need to submit it manually in ChatGPT.</p>
+                <p>Enter a YouTube URL to have it summarized by AI.</p>
             </div>
 
             <form id="urlForm">
@@ -311,7 +311,7 @@
                 </div>
                 
                 <button type="submit" class="submit-btn">
-                    Summarize with ChatGPT
+                    Summarize with AI
                 </button>
             </form>
         </div>
@@ -319,7 +319,7 @@
         <!-- Browse Videos Tab -->
         <div id="browse-tab" class="tab-content active">
             <div class="info">
-                <p>Click any video to open ChatGPT with a summarization request. You'll need to submit it manually in ChatGPT.</p>
+                <p>Click any video to have it summarized by AI.</p>
             </div>
 
             <div id="loading" class="loading" style="display: none;">
@@ -386,7 +386,7 @@
             const videoId = extractVideoId(youtubeUrl);
             
             if (videoId) {
-                redirectToChatGPT(videoId);
+                redirectToPerplexity(videoId);
             } else {
                 // Show error message
                 errorMessage.style.display = 'block';
@@ -414,10 +414,11 @@
             return null;
         }
 
-        function redirectToChatGPT(videoId) {
-            const baseUrl = 'https://chatgpt.com/?q=Summarize%20this%20transcript%20https%3A%2F%2Fyoutubetotranscript.com%2Ftranscript%3Fv%3D';
-            const dynamicUrl = baseUrl + videoId;
-            window.location.href = dynamicUrl;
+        function redirectToPerplexity(videoId) {
+            const youtubeUrl = `https://www.youtube.com/watch?v=${videoId}`;
+            const query = `Provide a detailed, topic-by-topic summary of this video of a Village of Trumansburg municipal meeting: ${youtubeUrl}`;
+            const perplexityUrl = `https://www.perplexity.ai/?q=${encodeURIComponent(query)}`;
+            window.location.href = perplexityUrl;
         }
 
         // RSS Feed functionality with retry logic
@@ -657,8 +658,8 @@
             // Visual feedback - briefly highlight the selected video
             element.classList.add('selected');
             
-            // Immediately redirect to ChatGPT
-            redirectToChatGPT(videoId);
+            // Redirect to Perplexity (same tab)
+            redirectToPerplexity(videoId);
         }
 
         function loadNextPage() {
