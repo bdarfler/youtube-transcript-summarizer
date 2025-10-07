@@ -437,8 +437,21 @@
             // Try multiple approaches in order of reliability with retry logic
             const methods = [
                 {
-                    name: 'AllOrigins Proxy',
-                    url: `https://api.allorigins.win/raw?url=${encodeURIComponent(rssUrl)}`,
+                    name: 'CORSProxy.io',
+                    url: `https://corsproxy.io/?${encodeURIComponent(rssUrl)}`,
+                    parser: parseXmlResponse
+                },
+                {
+                    name: 'AllOrigins (get endpoint)',
+                    url: `https://api.allorigins.win/get?url=${encodeURIComponent(rssUrl)}`,
+                    parser: (text) => {
+                        const data = JSON.parse(text);
+                        return parseXmlResponse(data.contents);
+                    }
+                },
+                {
+                    name: 'ThingProxy',
+                    url: `https://thingproxy.freeboard.io/fetch/${rssUrl}`,
                     parser: parseXmlResponse
                 },
                 {
@@ -447,14 +460,14 @@
                     parser: parseRss2JsonResponse
                 },
                 {
-                    name: 'CORS Anywhere',
-                    url: `https://cors-anywhere.herokuapp.com/${rssUrl}`,
+                    name: 'Proxy CORS.sh',
+                    url: `https://proxy.cors.sh/${rssUrl}`,
                     parser: parseXmlResponse
                 }
             ];
             
             // Retry logic with exponential backoff
-            async function attemptLoad(method, maxRetries = 3) {
+            async function attemptLoad(method, maxRetries = 2) {
                 for (let attempt = 1; attempt <= maxRetries; attempt++) {
                     try {
                         if (attempt > 1) {
