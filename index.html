@@ -417,8 +417,8 @@
         }
 
         function redirectToPerplexity(videoId) {
-            const youtubeUrl = `https://www.youtube.com/watch?v=${videoId}`;
-            const query = `Provide a detailed, topic-by-topic summary of this video of a Village of Trumansburg municipal meeting: ${youtubeUrl}`;
+            const transcriptUrl = `https://youtubetotranscript.com/transcript?v=${videoId}`;
+            const query = `Provide a detailed, topic-by-topic summary of this video of a Village of Trumansburg municipal meeting: ${transcriptUrl}`;
             const perplexityUrl = `https://www.perplexity.ai/?q=${encodeURIComponent(query)}`;
             window.location.href = perplexityUrl;
         }
