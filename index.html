@@ -278,47 +278,257 @@
             box-shadow: none;
         }
 
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            overflow: auto;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 900px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-close {
+            position: absolute;
+            right: 15px;
+            top: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            color: #556b73;
+            cursor: pointer;
+            line-height: 1;
+            transition: color 0.2s;
+        }
+
+        .modal-close:hover {
+            color: #1e4a5f;
+        }
+
+        .modal h2 {
+            color: #1e4a5f;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .modal-video {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            border: 2px solid #c8d6dc;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .modal-instructions {
+            background: #f0f7f9;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #2d5b4a;
+            margin-bottom: 20px;
+        }
+
+        .modal-instructions h3 {
+            color: #2d5b4a;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+
+        .modal-instructions ol {
+            margin-left: 20px;
+            color: #2d5b4a;
+            line-height: 1.8;
+        }
+
+        .modal-instructions li {
+            margin-bottom: 8px;
+        }
+
+        .modal-textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 15px;
+            border: 2px solid #c8d6dc;
+            border-radius: 6px;
+            font-family: 'Georgia', serif;
+            font-size: 14px;
+            resize: vertical;
+            margin-bottom: 15px;
+            background: #fafcfc;
+        }
+
+        .modal-textarea:focus {
+            outline: none;
+            border-color: #1e4a5f;
+            background: white;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .modal-btn {
+            background: linear-gradient(135deg, #1e4a5f 0%, #2d5b4a 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-family: 'Georgia', serif;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-btn:hover {
+            background: linear-gradient(135deg, #2d5b4a 0%, #1e4a5f 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(30, 74, 95, 0.3);
+        }
+
+        .modal-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .modal-btn-secondary {
+            background: #c8d6dc;
+            color: #1e4a5f;
+        }
+
+        .modal-btn-secondary:hover {
+            background: #b0c4cc;
+        }
+
+        /* Progressive Steps */
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e8f0f2;
+        }
+
+        .step-dot {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #c8d6dc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .step-dot.active {
+            background: linear-gradient(135deg, #1e4a5f 0%, #2d5b4a 100%);
+            transform: scale(1.1);
+        }
+
+        .step-dot.completed {
+            background: #2d5b4a;
+        }
+
+        .step-content {
+            display: none;
+        }
+
+        .step-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .step-title {
+            color: #1e4a5f;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .query-preview {
+            background: #f8fbfc;
+            border: 2px solid #c8d6dc;
+            border-radius: 6px;
+            padding: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #556b73;
+        }
+
+        .ai-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .ai-btn {
+            background: linear-gradient(135deg, #1e4a5f 0%, #2d5b4a 100%);
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-family: 'Georgia', serif;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .ai-btn:hover {
+            background: linear-gradient(135deg, #2d5b4a 0%, #1e4a5f 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(30, 74, 95, 0.3);
+        }
+
+        .ai-btn.copied {
+            background: #2d5b4a;
+        }
+
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Village of Trumansburg AI Transcript Summarizer</h1>
-        
-        <div class="tabs">
-            <button class="tab active" onclick="switchTab('browse')">Browse Videos</button>
-            <button class="tab" onclick="switchTab('url')">Enter URL</button>
-        </div>
 
-        <!-- URL Input Tab -->
-        <div id="url-tab" class="tab-content">
-            <div class="info">
-                <p>Enter a YouTube URL to create an AI summary.</p>
-                <p><strong>Note:</strong> AI summaries are not official meeting notes. AI can make mistakes or miss important details.</p>
-            </div>
-
-            <form id="urlForm">
-                <div class="form-group">
-                    <label for="youtubeUrl">YouTube URL:</label>
-                    <input 
-                        type="url" 
-                        id="youtubeUrl" 
-                        name="youtubeUrl" 
-                        placeholder="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-                        required
-                    >
-                    <div class="error-message" id="errorMessage">
-                        Please enter a valid YouTube URL
-                    </div>
-                </div>
-                
-                <button type="submit" class="submit-btn">
-                    Summarize with AI
-                </button>
-            </form>
-        </div>
-
-        <!-- Browse Videos Tab -->
-        <div id="browse-tab" class="tab-content active">
+        <div>
             <div class="info">
                 <p>Click any video to create an AI summary.</p>
                 <p><strong>Note:</strong> AI summaries are not official meeting notes. AI can make mistakes or miss important details.</p>
@@ -343,6 +553,61 @@
         </div>
     </div>
 
+    <!-- Simple Single Modal -->
+    <div id="transcriptModal" class="modal">
+        <div class="modal-content" style="max-width: 750px;">
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+            <h2>Create AI Summary with Gemini</h2>
+
+            <!-- Step 1 -->
+            <div style="margin-bottom: 30px; padding: 20px; background: #f8fbfc; border-radius: 6px; border-left: 4px solid #1e4a5f;">
+                <h3 style="color: #1e4a5f; font-size: 1.2rem; margin-bottom: 12px;">
+                    📄 Step 1: Get the transcript
+                </h3>
+                <ol style="margin: 15px 0 15px 20px; line-height: 1.8; color: #2d5b4a;">
+                    <li>Click the button below to open the transcript page in a new tab</li>
+                    <li><strong>Click the "Copy" button</strong> on that page to copy the transcript</li>
+                    <li>Return to this tab</li>
+                </ol>
+                <button id="openTranscriptBtn" class="submit-btn" style="width: 100%; margin-top: 10px;">
+                    Open Transcript Page →
+                </button>
+            </div>
+
+            <!-- Step 2 -->
+            <div style="margin-bottom: 30px; padding: 20px; background: #f8fbfc; border-radius: 6px; border-left: 4px solid #1e4a5f;">
+                <h3 style="color: #1e4a5f; font-size: 1.2rem; margin-bottom: 12px;">
+                    📝 Step 2: Paste the transcript
+                </h3>
+                <p style="font-size: 14px; color: #2d5b4a; margin-bottom: 10px; line-height: 1.6;">
+                    Click in the box below and paste the transcript you just copied:
+                </p>
+                <textarea id="transcriptText" class="modal-textarea"
+                          placeholder="Click here and paste (Ctrl+V or Cmd+V)..."
+                          style="min-height: 120px;"></textarea>
+            </div>
+
+            <!-- Step 3 -->
+            <div style="padding: 20px; background: #f8fbfc; border-radius: 6px; border-left: 4px solid #2d5b4a;">
+                <h3 style="color: #1e4a5f; font-size: 1.2rem; margin-bottom: 12px;">
+                    ✨ Step 3: Get your AI summary
+                </h3>
+                <ol style="margin: 15px 0 15px 20px; line-height: 1.8; color: #2d5b4a;">
+                    <li>Click the button below (this copies a question and opens Gemini)</li>
+                    <li>Paste into the Gemini chat box (Ctrl+V or Cmd+V)</li>
+                    <li>Press Enter and wait for your summary</li>
+                </ol>
+                <button id="geminiBtn" class="submit-btn" onclick="copyAndOpenGemini()"
+                        style="width: 100%; font-size: 18px; padding: 18px;" disabled>
+                    ✨ Copy Question & Open Gemini
+                </button>
+                <p style="font-size: 13px; color: #6b8591; margin-top: 10px; text-align: center; font-style: italic;">
+                    (This button will activate after you paste the transcript above)
+                </p>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Global variables
         let currentPage = 0;
@@ -350,51 +615,6 @@
         let allVideos = [];
         let videosLoaded = false;
 
-        function switchTab(tabName) {
-            // Hide all tab contents
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.remove('active');
-            });
-            
-            // Remove active class from all tabs
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            
-            // Show selected tab content
-            document.getElementById(tabName + '-tab').classList.add('active');
-            
-            // Add active class to selected tab
-            event.target.classList.add('active');
-            
-            // Auto-load videos when switching to browse tab
-            if (tabName === 'browse' && !videosLoaded) {
-                loadVideos();
-            }
-        }
-
-        // URL Form functionality
-        document.getElementById('urlForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const urlInput = document.getElementById('youtubeUrl');
-            const errorMessage = document.getElementById('errorMessage');
-            const youtubeUrl = urlInput.value.trim();
-            
-            // Hide error message
-            errorMessage.style.display = 'none';
-            
-            // Extract video ID from YouTube URL
-            const videoId = extractVideoId(youtubeUrl);
-            
-            if (videoId) {
-                redirectToPerplexity(videoId);
-            } else {
-                // Show error message
-                errorMessage.style.display = 'block';
-                urlInput.focus();
-            }
-        });
 
         function extractVideoId(url) {
             // Regular expressions to match different YouTube URL formats
@@ -416,12 +636,93 @@
             return null;
         }
 
+        // Open modal with video
         function redirectToPerplexity(videoId) {
-            const transcriptUrl = `https://youtubetotranscript.com/transcript?v=${videoId}`;
-            const query = `Provide a detailed, topic-by-topic summary of this video of a Village of Trumansburg municipal meeting: ${transcriptUrl}`;
-            const perplexityUrl = `https://www.perplexity.ai/?q=${encodeURIComponent(query)}`;
-            window.location.href = perplexityUrl;
+            openModal(videoId);
         }
+
+        function openModal(videoId) {
+            const modal = document.getElementById('transcriptModal');
+            const textarea = document.getElementById('transcriptText');
+            const openTranscriptBtn = document.getElementById('openTranscriptBtn');
+            const geminiBtn = document.getElementById('geminiBtn');
+
+            // Clear previous transcript
+            textarea.value = '';
+            geminiBtn.disabled = true;
+
+            // Store video ID
+            modal.dataset.videoId = videoId;
+
+            // Set up the transcript page button
+            const transcriptUrl = `https://youtubetotranscript.com/transcript?v=${videoId}`;
+            openTranscriptBtn.onclick = function() {
+                window.open(transcriptUrl, '_blank');
+            };
+
+            // Enable Gemini button when transcript is pasted
+            textarea.oninput = function() {
+                geminiBtn.disabled = textarea.value.trim().length < 50;
+            };
+
+            // Show modal
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('transcriptModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function copyAndOpenGemini() {
+            const textarea = document.getElementById('transcriptText');
+            const transcript = textarea.value.trim();
+
+            // Format the query
+            const query = `Provide a detailed, topic-by-topic summary of this Village of Trumansburg municipal meeting. Here is the full transcript:\n\n${transcript}`;
+
+            // Copy query to clipboard
+            const tempTextarea = document.createElement('textarea');
+            tempTextarea.value = query;
+            document.body.appendChild(tempTextarea);
+            tempTextarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextarea);
+
+            // Show visual feedback
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '✓ Copied! Opening Gemini...';
+            btn.style.opacity = '0.8';
+
+            // Open Gemini
+            window.open('https://gemini.google.com/', '_blank');
+
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.style.opacity = '1';
+            }, 3000);
+        }
+
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('transcriptModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const modal = document.getElementById('transcriptModal');
+                if (modal.classList.contains('active')) {
+                    closeModal();
+                }
+            }
+        });
 
         // RSS Feed functionality with retry logic
         async function loadVideos() {
@@ -720,13 +1021,7 @@
             });
         }
 
-        // Add some visual feedback for URL input
-        document.getElementById('youtubeUrl').addEventListener('input', function() {
-            const errorMessage = document.getElementById('errorMessage');
-            errorMessage.style.display = 'none';
-        });
-
-        // Auto-load videos when page loads since Browse Videos is the default tab
+        // Auto-load videos when page loads
         document.addEventListener('DOMContentLoaded', function() {
             loadVideos();
         });
