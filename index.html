@@ -557,7 +557,7 @@
     <div id="transcriptModal" class="modal">
         <div class="modal-content" style="max-width: 750px;">
             <span class="modal-close" onclick="closeModal()">&times;</span>
-            <h2>Create AI Summary with Gemini</h2>
+            <h2>Create AI Summary with ChatGPT</h2>
 
             <!-- Step 1 -->
             <div style="margin-bottom: 30px; padding: 20px; background: #f8fbfc; border-radius: 6px; border-left: 4px solid #1e4a5f;">
@@ -566,8 +566,8 @@
                 </h3>
                 <ol style="margin: 15px 0 15px 20px; line-height: 1.8; color: #2d5b4a;">
                     <li>Click the button below to open the transcript page in a new tab</li>
-                    <li><strong>Click the "Copy" button</strong> on that page to copy the transcript</li>
-                    <li>Return to this tab</li>
+                    <li>On that page, click the large <strong>"Copy"</strong> button to copy the transcript</li>
+                    <li>Come back to this page</li>
                 </ol>
                 <button id="openTranscriptBtn" class="submit-btn" style="width: 100%; margin-top: 10px;">
                     Open Transcript Page →
@@ -577,10 +577,10 @@
             <!-- Step 2 -->
             <div style="margin-bottom: 30px; padding: 20px; background: #f8fbfc; border-radius: 6px; border-left: 4px solid #1e4a5f;">
                 <h3 style="color: #1e4a5f; font-size: 1.2rem; margin-bottom: 12px;">
-                    📝 Step 2: Paste the transcript
+                    📝 Step 2: Paste the transcript here
                 </h3>
                 <p style="font-size: 14px; color: #2d5b4a; margin-bottom: 10px; line-height: 1.6;">
-                    Click in the box below and paste the transcript you just copied:
+                    Click in the box below, then paste what you copied (press <strong>Ctrl+V</strong> on Windows or <strong>Cmd+V</strong> on Mac):
                 </p>
                 <textarea id="transcriptText" class="modal-textarea"
                           placeholder="Click here and paste (Ctrl+V or Cmd+V)..."
@@ -592,16 +592,22 @@
                 <h3 style="color: #1e4a5f; font-size: 1.2rem; margin-bottom: 12px;">
                     ✨ Step 3: Get your AI summary
                 </h3>
-                <ol style="margin: 15px 0 15px 20px; line-height: 1.8; color: #2d5b4a;">
-                    <li>Click the button below (this copies a question and opens Gemini)</li>
-                    <li>Paste into the Gemini chat box (Ctrl+V or Cmd+V)</li>
-                    <li>Press Enter and wait for your summary</li>
+                <p style="margin: 10px 0 5px; line-height: 1.8; color: #2d5b4a;">
+                    Click the button below to copy your summary request and open ChatGPT.
+                </p>
+                <p style="margin: 0 0 15px; line-height: 1.8; color: #2d5b4a;">
+                    <strong>When ChatGPT opens, you'll see instructions right in the message box. Just follow them:</strong>
+                </p>
+                <ol style="margin: 0 0 15px 20px; line-height: 1.8; color: #2d5b4a;">
+                    <li>Select all the text in the box (<strong>Ctrl+A</strong> on Windows, <strong>Cmd+A</strong> on Mac)</li>
+                    <li>Paste (<strong>Ctrl+V</strong> on Windows, <strong>Cmd+V</strong> on Mac)</li>
+                    <li>Press <strong>Enter</strong></li>
                 </ol>
-                <button id="geminiBtn" class="submit-btn" onclick="copyAndOpenGemini()"
+                <button id="chatgptBtn" class="submit-btn" onclick="copyAndOpenChatGPT()"
                         style="width: 100%; font-size: 18px; padding: 18px;" disabled>
-                    ✨ Copy Question & Open Gemini
+                    Open ChatGPT →
                 </button>
-                <p style="font-size: 13px; color: #6b8591; margin-top: 10px; text-align: center; font-style: italic;">
+                <p id="chatgptHint" style="font-size: 13px; color: #6b8591; margin-top: 10px; text-align: center; font-style: italic;">
                     (This button will activate after you paste the transcript above)
                 </p>
             </div>
@@ -645,11 +651,13 @@
             const modal = document.getElementById('transcriptModal');
             const textarea = document.getElementById('transcriptText');
             const openTranscriptBtn = document.getElementById('openTranscriptBtn');
-            const geminiBtn = document.getElementById('geminiBtn');
+            const chatgptBtn = document.getElementById('chatgptBtn');
+            const chatgptHint = document.getElementById('chatgptHint');
 
             // Clear previous transcript
             textarea.value = '';
-            geminiBtn.disabled = true;
+            chatgptBtn.disabled = true;
+            chatgptHint.textContent = '(This button will activate after you paste the transcript above)';
 
             // Store video ID
             modal.dataset.videoId = videoId;
@@ -660,9 +668,9 @@
                 window.open(transcriptUrl, '_blank');
             };
 
-            // Enable Gemini button when transcript is pasted
+            // Enable ChatGPT button when transcript is pasted
             textarea.oninput = function() {
-                geminiBtn.disabled = textarea.value.trim().length < 50;
+                chatgptBtn.disabled = textarea.value.trim().length < 50;
             };
 
             // Show modal
@@ -676,34 +684,43 @@
             document.body.style.overflow = '';
         }
 
-        function copyAndOpenGemini() {
+        function copyAndOpenChatGPT() {
             const textarea = document.getElementById('transcriptText');
             const transcript = textarea.value.trim();
+            const btn = document.getElementById('chatgptBtn');
+            const hint = document.getElementById('chatgptHint');
 
-            // Format the query
+            // Format the full query to copy to clipboard
             const query = `Provide a detailed, topic-by-topic summary of this Village of Trumansburg municipal meeting. Here is the full transcript:\n\n${transcript}`;
 
-            // Copy query to clipboard
-            const tempTextarea = document.createElement('textarea');
-            tempTextarea.value = query;
-            document.body.appendChild(tempTextarea);
-            tempTextarea.select();
-            document.execCommand('copy');
-            document.body.removeChild(tempTextarea);
+            // Instructions that appear in ChatGPT's input box via ?q= parameter
+            const chatGPTInstructions = '👉 Select all this text (Ctrl+A or Cmd+A), then Paste (Ctrl+V or Cmd+V), then press Enter to get your meeting summary.';
+            const chatGPTUrl = `https://chatgpt.com/?q=${encodeURIComponent(chatGPTInstructions)}`;
 
-            // Show visual feedback
-            const btn = event.target;
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '✓ Copied! Opening Gemini...';
-            btn.style.opacity = '0.8';
+            function openChatGPT() {
+                btn.innerHTML = '✓ Copied! Opening ChatGPT...';
+                hint.innerHTML = '<strong>In ChatGPT: Select All (Ctrl+A), Paste (Ctrl+V), press Enter!</strong>';
+                hint.style.color = '#2d5b4a';
 
-            // Open Gemini
-            window.open('https://gemini.google.com/', '_blank');
+                window.open(chatGPTUrl, '_blank');
 
-            setTimeout(() => {
-                btn.innerHTML = originalText;
-                btn.style.opacity = '1';
-            }, 3000);
+                setTimeout(() => {
+                    btn.innerHTML = 'Open ChatGPT →';
+                    hint.innerHTML = '<strong>Already in ChatGPT?</strong> Select All (Ctrl+A), Paste (Ctrl+V), press Enter!';
+                }, 3000);
+            }
+
+            // Copy full query to clipboard, then open ChatGPT with instructions pre-filled
+            navigator.clipboard.writeText(query).then(openChatGPT).catch(() => {
+                // Fallback for older browsers
+                const tempTextarea = document.createElement('textarea');
+                tempTextarea.value = query;
+                document.body.appendChild(tempTextarea);
+                tempTextarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(tempTextarea);
+                openChatGPT();
+            });
         }
 
         // Close modal when clicking outside
